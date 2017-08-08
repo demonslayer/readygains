@@ -6,51 +6,42 @@
     <link type="text/css" rel="stylesheet" href="css/style.css"/>
     
     <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="https://npmcdn.com/parse/dist/parse.min.js"></script>
-    <script type="text/javascript" src="js/app.js"></script>
-    
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+    
+        var router = Backbone.Router.extend({
+            routes: {
+                '': 'home'
+            },
+            home: function() {
+                this.homeView = new homeView();
+                this.homeView.render();
+            }
+        });
+        
+        var homeView = Backbone.View.extend({
+            el: 'body',
+            template: _.template('I\'m a banana!'),
+            render: function() {
+                this.$el.html(this.template({}))
+            }
+        });
+        
+        var app;
+        $(document).ready(function() {
+            app = new router();
+            Backbone.history.start();
+        });
+        
+    </script>
+    
   </head>
   
   <body>
-   
-   <div class="container-fluid">
-     <div class="row-fluid">
-       <h1>ReadyGains! Log Your Workout Here</h1>
-       
-       <table class="table table-bordered table-striped">
-         <caption>Workout Session</caption>
-         <thread>
-           <tr>
-             <th>
-                 Exercise
-             </th>
-             <th>
-                 Number of Reps
-             </th>
-             <th>
-                Weight (if applicable)
-             </th>
-           </tr>
-         </thread>
-         
-         <tbody id="tablebody">
-           <tr>
-             <td colspan="3"><img src="img/spinner.gif" width="20"></td>
-           </tr>
-         </tbody>
-       </table>
-     </div>
-     
-     <div class="row-fluid">
-       <form id="new-exercise-log">
-         <p></p><input type="text" name="exercisename" placeholder="exercise name"/></p>
-         <p></p><input type="text" name="numberofreps" placeholder="reps"/></p>
-         <p></p><input type="text" name="weight" placeholder="weight (if applicable)"/></p>
-         <a id="send" class="btn btn-primary">Submit</a>
-       </form>
-     </div>
-   </div>
    
   </body>
   
