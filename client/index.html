@@ -13,22 +13,80 @@
     
     <script>
     
+        var exerciseData = [
+                {
+                    name: 'bench press',
+                    equipment: 'barbell',
+                    type: 'chest'
+                },
+                {
+                    name: 'squat',
+                    equipment: 'barbell',
+                    type: 'legs'
+                },
+                {
+                    name: 'jogging',
+                    equipment: 'outside',
+                    type: 'cardio'
+                }
+            ];
+    
         var router = Backbone.Router.extend({
             routes: {
-                '': 'home'
+                '': 'home',
+                "exercises/:exerciseName": 'loadExercise'
+            },
+            initialize: function() {
+                var exercises = new Exercises();
+                exercises.reset(exerciseData);
+                this.homeView = new homeView({collection: exercises});
+                this.exerciseView = new exerciseView({collection: exercises});
             },
             home: function() {
-                this.homeView = new homeView();
                 this.homeView.render();
+            },
+            loadExercise: function(exerciseName) {
+                this.exerciseView.loadExercise(exerciseName);
+            }
+        });
+        
+        var Exercises = Backbone.Collection.extend({});
+        
+        var exerciseView = Backbone.View.extend({
+            initialize: function() {
+                this.model = new (Backbone.Model.extend({}));
+                this.model.bind('change', this.render, this);
+                this.bind('spinner', this.showSpinner, this);
+            },
+            template: _.template(
+               '<p> this is sparta</p>' +
+               '<p> name: <%= attributes.name %> </p>' +
+               '<p> type: <%= attributes.type %> </p>'
+               ),
+            render: function(exerciseName) {
+                var exerciseHtml = this.template(this.model);
+                $('body').html(exerciseHtml);
+            },
+            templateSpinner: '<img src="img/spinner.gif" width="30"/>',
+            loadExercise: function(exerciseName) {
+                this.trigger('spinner');
+                var view = this;
+                setTimeout(function() {
+                    view.model.set(view.collection.where({name: exerciseName})[0].attributes)
+                }, 1000);
+            },
+            showSpinner: function() {
+                $('body').html(this.templateSpinner);
             }
         });
         
         var homeView = Backbone.View.extend({
             el: 'body',
-            template: _.template('I\'m a banana!'),
+            template: _.template('Exercise Data: <%= data %>'),
             render: function() {
-                this.$el.html(this.template({}))
+                this.$el.html(this.template({data: JSON.stringify(this.collection.models)}))
             }
+            // TODO subviews
         });
         
         var app;
@@ -40,9 +98,5 @@
     </script>
     
   </head>
-  
-  <body>
-   
-  </body>
   
 </html>
